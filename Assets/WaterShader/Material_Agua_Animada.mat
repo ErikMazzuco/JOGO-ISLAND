@@ -110,10 +110,10 @@ Material:
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
-    - _FoamAmount: 0.253
-    - _FoamScale: 1.77
-    - _FresnelPower: 1.88
-    - _GlintStrength: 0.13
+    - _FoamAmount: 0.203
+    - _FoamScale: 0.24
+    - _FresnelPower: 5.48
+    - _GlintStrength: 1.82
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
@@ -130,9 +130,9 @@ Material:
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
-    - _WaveFrequency: 0.75
-    - _WaveHeight: 1
-    - _WaveSpeed: 1.94
+    - _WaveFrequency: 0.79
+    - _WaveHeight: 0.113
+    - _WaveSpeed: 0.64
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
