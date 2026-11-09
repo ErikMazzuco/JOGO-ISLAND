@@ -103,18 +103,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9a304a11270c3049b8a4de013a36274, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rangeVisao: 15
+  rangeVisao: 10
   rangeAtaque: 1
   dano: 10
-  intervaloAtaque: 2
+  intervaloAtaque: 0.18
   animParado: IDLE
   animAndar: WALK
   animAtaque: ATTACK
-  somAndar: {fileID: 8300000, guid: 3f70210f2ad1a8e49994684e2ff9bce1, type: 3}
-  somAtaque: {fileID: 8300000, guid: 2ece9e85c6d9d7b4aa30dda1102cf7ef, type: 3}
+  somAndar: {fileID: 8300000, guid: 8ebbcfaaeaedc57429bd48f909c26321, type: 3}
+  somAtaque: {fileID: 8300000, guid: 56b450003b094244ba6373d9a411b9ad, type: 3}
   somRugido: {fileID: 8300000, guid: ccf1999832c00bc49ad248bb449538d1, type: 3}
-  intervaloPassos: 0.7
-  volumePassos: 0.515
+  intervaloPassos: 0.18
+  volumePassos: 0.26
   volumeAtaque: 0.604
   volumeRugido: 0.686
 --- !u!195 &6321722088325742275
