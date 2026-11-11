@@ -42,6 +42,18 @@ A exploração é realizada em primeira pessoa, proporcionando uma experiência 
 - **C#** — programação das mecânicas e comportamentos do jogo.
 - **Blender** — criação e edição de modelos 3D, quando aplicável.
 
+## 📥 Download
+
+Quer jogar ISLAND?
+
+**[Baixar ISLAND para Windows](https://github.com/ErikMazzuco/JOGO-ISLAND/releases/latest)**
+
+1. Baixe o arquivo ZIP da versão mais recente.
+2. Extraia todos os arquivos para uma pasta.
+3. Execute `ISLAND.exe` para começar a jogar.
+
+*Observação: o jogo deve ser executado no Windows e pode exibir um aviso de segurança por ser um aplicativo não assinado.*
+
 ## 🚀 Como executar o projeto
 
 1. Clone este repositório:
