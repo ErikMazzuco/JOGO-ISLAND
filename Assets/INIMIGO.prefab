@@ -127,16 +127,16 @@ MonoBehaviour:
   rangeVisao: 10
   rangeAtaque: 1
   dano: 10
-  intervaloAtaque: 0.18
+  intervaloAtaque: 1
   animParado: IDLE
   animAndar: WALK
   animAtaque: ATTACK
   somAndar: {fileID: 8300000, guid: 8ebbcfaaeaedc57429bd48f909c26321, type: 3}
   somAtaque: {fileID: 8300000, guid: 56b450003b094244ba6373d9a411b9ad, type: 3}
   somRugido: {fileID: 8300000, guid: ccf1999832c00bc49ad248bb449538d1, type: 3}
-  intervaloPassos: 0.18
+  intervaloPassos: 1
   volumePassos: 0.26
-  volumeAtaque: 0.604
+  volumeAtaque: 0.512
   volumeRugido: 0.686
 --- !u!195 &6321722088325742275
 NavMeshAgent:
@@ -148,16 +148,16 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 1
+  m_Speed: 0.9
   m_Acceleration: 8
   avoidancePriority: 50
-  m_AngularSpeed: 60
+  m_AngularSpeed: 120
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 1
-  m_BaseOffset: 0
+  m_BaseOffset: -0.1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!54 &2683596773017993864
