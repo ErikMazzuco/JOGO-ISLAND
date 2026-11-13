@@ -34,21 +34,37 @@ public class VidaSkeleton : MonoBehaviour
         }
     }
 
-    
-void Morrer()
-{
-    morto = true;
+    void Morrer()
+    {
+        morto = true;
 
-    if (agent != null)
-        agent.enabled = false;
+        // Parar movimentação
+        if (agent != null)
+        {
+            agent.enabled = false;
+        }
 
-    Collider[] colisores = GetComponentsInChildren<Collider>();
+        // Executar animação de morte
+        if (anim != null)
+        {
+            anim.Play(animacaoMorte, 0, 0f);
+        }
+        else
+        {
+            Debug.LogWarning("Animator do esqueleto não encontrado!");
+        }
 
-    foreach (Collider col in colisores)
-        col.enabled = false;
+        // Desativar colisores
+        Collider[] colisores = GetComponentsInChildren<Collider>();
 
-    // Desaparece depois de 1 segundo
-    Destroy(gameObject, 1f);
-}
+        foreach (Collider col in colisores)
+        {
+            col.enabled = false;
+        }
 
+        Debug.Log("Esqueleto morreu!");
+
+        // Destruir após a animação
+        Destroy(gameObject, tempoParaDestruir);
+    }
 }

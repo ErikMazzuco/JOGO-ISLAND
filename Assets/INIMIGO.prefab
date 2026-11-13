@@ -136,8 +136,8 @@ MonoBehaviour:
   somRugido: {fileID: 8300000, guid: ccf1999832c00bc49ad248bb449538d1, type: 3}
   intervaloPassos: 1
   volumePassos: 0.26
-  volumeAtaque: 0.512
-  volumeRugido: 0.686
+  volumeAtaque: 0.381
+  volumeRugido: 0.585
 --- !u!195 &6321722088325742275
 NavMeshAgent:
   m_ObjectHideFlags: 0

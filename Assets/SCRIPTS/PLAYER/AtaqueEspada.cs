@@ -8,6 +8,14 @@ public class AtaqueEspada : MonoBehaviour
     public float dano = 50f;
     public float intervaloAtaque = 0.8f;
 
+    [Header("Animação")]
+    public Animator animacaoArma;
+    public string nomeAnimacao = "SWORD_ATTACK";
+
+    [Header("Som")]
+    public AudioSource audioSource;
+    public AudioClip somEspada;
+
     private float proximoAtaque;
 
     void Update()
@@ -21,6 +29,19 @@ public class AtaqueEspada : MonoBehaviour
 
     void Atacar()
     {
+        // Executar animação
+        if (animacaoArma != null)
+        {
+            animacaoArma.Play(nomeAnimacao, 0, 0f);
+        }
+
+        // Reproduzir som
+        if (audioSource != null && somEspada != null)
+        {
+            audioSource.PlayOneShot(somEspada);
+        }
+
+        // Verificar inimigo na frente
         RaycastHit hit;
 
         if (Physics.Raycast(transform.position, transform.forward,
