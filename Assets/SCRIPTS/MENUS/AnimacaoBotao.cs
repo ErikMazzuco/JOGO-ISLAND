@@ -22,7 +22,7 @@ public class AnimacaoBotao : MonoBehaviour,
         transform.localScale = Vector3.Lerp(
             transform.localScale,
             escalaAlvo,
-            Time.deltaTime * velocidade
+            Time.unscaledDeltaTime * velocidade
         );
     }
 
