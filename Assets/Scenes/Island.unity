@@ -47307,6 +47307,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   vida: 100
   vidaMaxima: 100
+  somDano: {fileID: 8300000, guid: 2c3c805f930abb24d9477622f1d47e91, type: 3}
+  somMorte: {fileID: 8300000, guid: 0ada3229fbf3e8a4ba465e5df57a2835, type: 3}
+  volumeDano: 1
+  volumeMorte: 1
 --- !u!82 &2029931407
 AudioSource:
   m_ObjectHideFlags: 0
@@ -47419,10 +47423,10 @@ MonoBehaviour:
   alcance: 2.5
   dano: 50
   intervaloAtaque: 0.8
-  animacaoArma: {fileID: 0}
+  animacaoArma: {fileID: 384671557}
   nomeAnimacao: SWORD_ATTACK
   audioSource: {fileID: 0}
-  somEspada: {fileID: 0}
+  somEspada: {fileID: 8300000, guid: 24799a6837520f9459dad7cef7df4478, type: 3}
 --- !u!4 &2030310042 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4197058723205850771, guid: 762c7ce7ac5a7b84390c6e08365bfa8f, type: 3}
