@@ -114,8 +114,11 @@ public class PlayerMovement : MonoBehaviour
 
     void ControlarCamera()
     {
-        float mouseX = Input.GetAxis("Mouse X") * sensibilidadeMouse * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * sensibilidadeMouse * Time.deltaTime;
+        // A sensibilidade escolhida nas Opções multiplica o valor base
+        float sensibilidade = sensibilidadeMouse * Configuracoes.Sensibilidade;
+
+        float mouseX = Input.GetAxis("Mouse X") * sensibilidade * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * sensibilidade * Time.deltaTime;
 
         rotacaoX -= mouseY;
         rotacaoX = Mathf.Clamp(rotacaoX, -90f, 90f);
