@@ -38,9 +38,26 @@ public static class Configuracoes
 
         mostrarFps = PlayerPrefs.GetInt(ChaveFps, 1) == 1;      // FPS vem LIGADO por padrão
         sombras = PlayerPrefs.GetInt(ChaveSombras, 1) == 1;
-        qualidade = (NivelQualidade)Mathf.Clamp(PlayerPrefs.GetInt(ChaveQualidade, (int)NivelQualidade.Alta), 0, 2);
+        qualidade = PlayerPrefs.HasKey(ChaveQualidade)
+            ? (NivelQualidade)Mathf.Clamp(PlayerPrefs.GetInt(ChaveQualidade), 0, 2)
+            : DetectarQualidade();
         distancia = Mathf.Clamp(PlayerPrefs.GetFloat(ChaveDistancia, DistanciaPadrao), DistanciaMin, DistanciaMax);
         sensibilidade = Mathf.Clamp(PlayerPrefs.GetFloat(ChaveSensibilidade, 1f), SensibilidadeMin, SensibilidadeMax);
+    }
+
+    /// <summary>
+    /// Primeira vez que o jogo abre (nada salvo): escolhe a qualidade pelo hardware.
+    /// Placa de vídeo com pouca memória e poucos núcleos = Baixa; intermediário = Média.
+    /// </summary>
+    static NivelQualidade DetectarQualidade()
+    {
+        int video = SystemInfo.graphicsMemorySize;   // MB
+        int ram = SystemInfo.systemMemorySize;       // MB
+        int nucleos = SystemInfo.processorCount;
+
+        if ((video <= 2048 && nucleos <= 4) || ram <= 4096) return NivelQualidade.Baixa;
+        if (video <= 3072 || nucleos <= 4) return NivelQualidade.Media;
+        return NivelQualidade.Alta;
     }
 
     static void Salvou()

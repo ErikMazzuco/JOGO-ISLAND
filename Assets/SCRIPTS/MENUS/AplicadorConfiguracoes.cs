@@ -9,9 +9,15 @@ using UnityEngine.SceneManagement;
 /// Nasce sozinho ao iniciar o jogo: não precisa colocar em nenhuma cena.
 /// Os valores originais do projeto são guardados e devolvidos ao fechar o jogo,
 /// então as opções nunca bagunçam as configurações do Editor.
+///
+/// Qualidade Alta  = configuração gráfica original do projeto.
+/// Qualidade Média/Baixa = perfil leve (Assets/Resources/PerfilLeve, criado em ISLAND > Criar Perfil Gráfico Leve)
+///                         + terreno mais simples (o maior ganho em PCs fracos).
 /// </summary>
 public class AplicadorConfiguracoes : MonoBehaviour
 {
+    const string CaminhoPerfilLeve = "PerfilLeve/RP_Leve";
+
     static AplicadorConfiguracoes instancia;
 
     class DadosCamera { public float farClip; public bool posProcessamento; }
@@ -20,6 +26,11 @@ public class AplicadorConfiguracoes : MonoBehaviour
     {
         public float erroPixel, densidadeDetalhe, distanciaArvores, distanciaDetalhe, distanciaBase;
     }
+
+    // Pipelines gráficos
+    RenderPipelineAsset pipelineOriginal;          // o que estava ligado ao abrir o jogo (pode ser nulo)
+    UniversalRenderPipelineAsset assetAlta;        // configuração original
+    UniversalRenderPipelineAsset assetLeve;        // cópia leve em memória (pode ser nula se não foi criada)
 
     // Valores originais do projeto
     float origEscala = 1f, origDistSombra = 50f, origLod = 1f;
@@ -45,20 +56,21 @@ public class AplicadorConfiguracoes : MonoBehaviour
         instancia = go.AddComponent<AplicadorConfiguracoes>();
     }
 
-    UniversalRenderPipelineAsset Asset
-    {
-        get { return GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset; }
-    }
-
     void Awake()
     {
-        var asset = Asset;
-        if (asset != null)
+        pipelineOriginal = QualitySettings.renderPipeline;
+        assetAlta = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
+
+        if (assetAlta != null)
         {
-            origEscala = asset.renderScale;
-            origDistSombra = asset.shadowDistance;
-            origMsaa = asset.msaaSampleCount;
+            origEscala = assetAlta.renderScale;
+            origDistSombra = assetAlta.shadowDistance;
+            origMsaa = assetAlta.msaaSampleCount;
         }
+
+        // Perfil leve (cópia em memória, para nunca alterar o arquivo)
+        var modelo = Resources.Load<UniversalRenderPipelineAsset>(CaminhoPerfilLeve);
+        if (modelo != null) assetLeve = Instantiate(modelo);
 
         origLod = QualitySettings.lodBias;
         origMipLimite = QualitySettings.globalTextureMipmapLimit;
@@ -97,17 +109,23 @@ public class AplicadorConfiguracoes : MonoBehaviour
     // ---------- Qualidade (vale para o jogo todo) ----------
     void AplicarQualidadeGlobal(NivelQualidade q)
     {
-        var asset = Asset;
-        if (asset != null)
-        {
-            float escala = q == NivelQualidade.Baixa ? 0.7f : q == NivelQualidade.Media ? 0.85f : origEscala;
-            asset.renderScale = Mathf.Min(origEscala, escala);
+        // Média e Baixa usam o perfil leve, se ele existir
+        bool usarLeve = q != NivelQualidade.Alta && assetLeve != null;
+        UniversalRenderPipelineAsset alvo = usarLeve ? assetLeve : assetAlta;
 
-            int msaa = q == NivelQualidade.Alta ? origMsaa : (q == NivelQualidade.Media ? 2 : 1);
-            asset.msaaSampleCount = Mathf.Min(origMsaa, msaa);
+        if (alvo != null && GraphicsSettings.currentRenderPipeline != alvo)
+            QualitySettings.renderPipeline = alvo;
+
+        if (alvo != null)
+        {
+            float escala = q == NivelQualidade.Baixa ? 0.6f : q == NivelQualidade.Media ? 0.85f : origEscala;
+            alvo.renderScale = Mathf.Min(origEscala, escala);
+
+            int msaa = q == NivelQualidade.Alta ? origMsaa : 1;
+            alvo.msaaSampleCount = Mathf.Min(origMsaa, msaa);
 
             float sombra = q == NivelQualidade.Baixa ? 15f : q == NivelQualidade.Media ? 30f : origDistSombra;
-            asset.shadowDistance = Mathf.Min(origDistSombra, sombra);
+            alvo.shadowDistance = Mathf.Min(origDistSombra, sombra);
         }
 
         QualitySettings.lodBias = q == NivelQualidade.Baixa ? Mathf.Min(origLod, 0.8f)
@@ -120,11 +138,18 @@ public class AplicadorConfiguracoes : MonoBehaviour
         QualitySettings.pixelLightCount = q == NivelQualidade.Baixa ? Mathf.Min(origLuzesPixel, 1) : origLuzesPixel;
     }
 
-    // ---------- Terreno: detalhe, árvores e distância ----------
+    // ---------- Terreno ----------
+    // O terreno tem 3 mapas de mistura (9 a 12 texturas): perto da câmera ele é desenhado em várias
+    // passadas pesadas. Em PCs fracos isso é o que mais custa quando se olha para o chão.
+    // "Distância do mapa base": além dela o terreno usa uma única textura pré-misturada (barato).
     void AplicarTerrenos(NivelQualidade q)
     {
         bool distancia = Configuracoes.DistanciaPersonalizada;
         float d = Configuracoes.Distancia;
+
+        float limiteMapaBase = q == NivelQualidade.Baixa ? 0f : q == NivelQualidade.Media ? 20f : float.MaxValue;
+        float limiteArvores = q == NivelQualidade.Baixa ? 120f : q == NivelQualidade.Media ? 300f : float.MaxValue;
+        float limiteDetalhe = q == NivelQualidade.Baixa ? 20f : q == NivelQualidade.Media ? 45f : float.MaxValue;
 
         foreach (Terrain t in Terrain.activeTerrains)
         {
@@ -142,26 +167,27 @@ public class AplicadorConfiguracoes : MonoBehaviour
                 terrenos[t] = o;
             }
 
-            t.heightmapPixelError = q == NivelQualidade.Baixa ? Mathf.Max(o.erroPixel, 12f)
-                                  : q == NivelQualidade.Media ? Mathf.Max(o.erroPixel, 6f)
+            t.heightmapPixelError = q == NivelQualidade.Baixa ? Mathf.Max(o.erroPixel, 20f)
+                                  : q == NivelQualidade.Media ? Mathf.Max(o.erroPixel, 8f)
                                   : o.erroPixel;
 
-            t.detailObjectDensity = q == NivelQualidade.Baixa ? Mathf.Min(o.densidadeDetalhe, 0.4f)
+            t.detailObjectDensity = q == NivelQualidade.Baixa ? Mathf.Min(o.densidadeDetalhe, 0.35f)
                                   : q == NivelQualidade.Media ? Mathf.Min(o.densidadeDetalhe, 0.7f)
                                   : o.densidadeDetalhe;
 
+            t.basemapDistance = Mathf.Min(o.distanciaBase, limiteMapaBase);
+
+            float arvores = Mathf.Min(o.distanciaArvores, limiteArvores);
+            float detalhe = Mathf.Min(o.distanciaDetalhe, limiteDetalhe);
+
             if (distancia)
             {
-                t.treeDistance = Mathf.Min(o.distanciaArvores, d);
-                t.basemapDistance = Mathf.Min(o.distanciaBase, d);
-                t.detailObjectDistance = Mathf.Min(o.distanciaDetalhe, Mathf.Max(20f, d * 0.12f));
+                arvores = Mathf.Min(arvores, d);
+                detalhe = Mathf.Min(detalhe, Mathf.Max(20f, d * 0.12f));
             }
-            else
-            {
-                t.treeDistance = o.distanciaArvores;
-                t.basemapDistance = o.distanciaBase;
-                t.detailObjectDistance = o.distanciaDetalhe;
-            }
+
+            t.treeDistance = arvores;
+            t.detailObjectDistance = detalhe;
         }
     }
 
@@ -217,12 +243,14 @@ public class AplicadorConfiguracoes : MonoBehaviour
     // ---------- Devolve tudo como estava ao fechar o jogo ----------
     void Restaurar()
     {
-        var asset = Asset;
-        if (asset != null)
+        // Volta o pipeline gráfico que estava ligado antes
+        QualitySettings.renderPipeline = pipelineOriginal;
+
+        if (assetAlta != null)
         {
-            asset.renderScale = origEscala;
-            asset.shadowDistance = origDistSombra;
-            asset.msaaSampleCount = origMsaa;
+            assetAlta.renderScale = origEscala;
+            assetAlta.shadowDistance = origDistSombra;
+            assetAlta.msaaSampleCount = origMsaa;
         }
 
         QualitySettings.lodBias = origLod;
