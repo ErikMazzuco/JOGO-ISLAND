@@ -18,6 +18,11 @@ public class VidaSkeleton : MonoBehaviour
     [Tooltip("Quanto ele afunda no chão enquanto some (metros).")]
     public float afundar = 0.15f;
 
+    [Header("Som de morte")]
+    [Tooltip("Som tocado quando o esqueleto morre (MORTE INIMIGO.mp3).")]
+    public AudioClip somMorte;
+    [Range(0f, 1f)] public float volumeMorte = 1f;
+
     [Header("Animação de morte do Animator (opcional)")]
     public bool tocarAnimacaoMorte = false;
     public string animacaoMorte = "DEATH";
@@ -81,6 +86,10 @@ public class VidaSkeleton : MonoBehaviour
 
         foreach (var fonte in GetComponents<AudioSource>())
             fonte.Stop();
+
+        // Som de morte (fonte separada, assim ele toca inteiro mesmo se o esqueleto for destruído)
+        if (somMorte != null)
+            AudioSource.PlayClipAtPoint(somMorte, transform.position + Vector3.up, volumeMorte);
 
         // Animação de morte do próprio Animator (só se existir e estiver ligada)
         if (anim != null)

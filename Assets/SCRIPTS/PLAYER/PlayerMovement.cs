@@ -11,6 +11,15 @@ public class PlayerMovement : MonoBehaviour
     public float alturaPulo = 1.5f;
     public float gravidade = -20f;
 
+    [Header("Pulo mais gostoso")]
+    [Tooltip("Tempo extra (s) em que ainda dá para pular depois de sair da beirada do chão.")]
+    public float tempoCoyote = 0.15f;
+    [Tooltip("Tempo (s) que o pulo fica 'guardado' se você apertar antes de tocar no chão.")]
+    public float tempoPuloAntecipado = 0.15f;
+    [Tooltip("Soltar o espaço no meio do pulo faz um pulo mais baixo.")]
+    public bool puloVariavel = true;
+    [Range(0.1f, 1f)] public float corteDoPulo = 0.5f;
+
     [Header("Camera")]
     public Transform cameraPlayer;
     public float sensibilidadeMouse = 200f;
@@ -27,6 +36,8 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 velocidadeVertical;
     private float rotacaoX = 0f;
     private float proximoPasso;
+    private float ultimoNoChao = -10f;
+    private float ultimoPuloApertado = -10f;
 
     void Start()
     {
@@ -63,10 +74,27 @@ public class PlayerMovement : MonoBehaviour
             velocidadeVertical.y = -2f;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && noChao)
+        // Guarda o último momento em que estava no chão (coyote time)
+        if (noChao) ultimoNoChao = Time.time;
+
+        // Guarda o último momento em que apertou pulo (pulo antecipado)
+        if (Input.GetKeyDown(KeyCode.Space)) ultimoPuloApertado = Time.time;
+
+        bool podePular = Time.time - ultimoNoChao <= tempoCoyote;
+        bool querPular = Time.time - ultimoPuloApertado <= tempoPuloAntecipado;
+
+        if (podePular && querPular)
         {
             velocidadeVertical.y = Mathf.Sqrt(alturaPulo * -2f * gravidade);
+
+            // Gasta os dois, senão pularia duas vezes seguidas
+            ultimoNoChao = -10f;
+            ultimoPuloApertado = -10f;
         }
+
+        // Soltou o espaço subindo: corta o pulo (pulo curto)
+        if (puloVariavel && Input.GetKeyUp(KeyCode.Space) && velocidadeVertical.y > 0f)
+            velocidadeVertical.y *= corteDoPulo;
 
         velocidadeVertical.y += gravidade * Time.deltaTime;
 
@@ -76,7 +104,11 @@ public class PlayerMovement : MonoBehaviour
 
         movimentoFinal.y = velocidadeVertical.y;
 
-        controller.Move(movimentoFinal * Time.deltaTime);
+        CollisionFlags colisao = controller.Move(movimentoFinal * Time.deltaTime);
+
+        // Bateu a cabeça no teto: para de subir (senão fica "colado" no teto)
+        if ((colisao & CollisionFlags.Above) != 0 && velocidadeVertical.y > 0f)
+            velocidadeVertical.y = 0f;
 
         
         // Sons dos passos
