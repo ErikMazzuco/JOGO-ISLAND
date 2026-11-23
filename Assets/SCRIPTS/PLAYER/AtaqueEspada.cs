@@ -39,6 +39,25 @@ public class AtaqueEspada : MonoBehaviour
     GameObject miraCanvas;
     Image miraImagem;
 
+    void Awake()
+    {
+        // Se houver mais de um AtaqueEspada na cena (ex.: um no PLAYER e outro na espada), cada clique
+        // daria o golpe duas vezes e tocaria dois sons. Fica só um: o que está no jogador.
+        var todos = FindObjectsByType<AtaqueEspada>(FindObjectsInactive.Exclude, FindObjectsSortMode.InstanceID);
+        if (todos.Length <= 1) return;
+
+        AtaqueEspada principal = null;
+        foreach (var a in todos)
+            if (a.GetComponent<PlayerMovement>() != null) { principal = a; break; }
+        if (principal == null) principal = todos[0];
+
+        if (principal != this)
+        {
+            Debug.LogWarning("Havia mais de um AtaqueEspada na cena; o de '" + name + "' foi desligado (fica só o de '" + principal.name + "').");
+            enabled = false;
+        }
+    }
+
     void Start()
     {
         cam = Camera.main;

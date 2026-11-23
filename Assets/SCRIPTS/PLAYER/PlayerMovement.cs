@@ -44,6 +44,11 @@ public class PlayerMovement : MonoBehaviour
         controller = GetComponent<CharacterController>();
         audioSource = GetComponent<AudioSource>();
 
+        // Skin Width muito pequeno faz o CharacterController travar em rampas e escadas.
+        // A Unity recomenda ~10% do raio.
+        float skinMinimo = controller.radius * 0.1f;
+        if (controller.skinWidth < skinMinimo) controller.skinWidth = skinMinimo;
+
         audioSource.playOnAwake = false;
         audioSource.loop = false;
         audioSource.spatialBlend = 0f;

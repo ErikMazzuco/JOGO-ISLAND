@@ -6,7 +6,18 @@ using UnityEngine.Rendering;
 
 public class VidaSkeleton : MonoBehaviour
 {
-    public float vida = 100f;
+    [Header("Vida")]
+    [Tooltip("Quantos golpes de espada ele aguenta antes de morrer.")]
+    public int golpesParaMorrer = 2;
+    [Tooltip("Golpes que chegam juntos (menos que isso de intervalo) contam como um só.")]
+    public float intervaloEntreGolpes = 0.3f;
+
+    // Campo antigo (a vida agora é contada em golpes). Mantido para não perder dados do prefab.
+    [HideInInspector] public float vida = 100f;
+
+    [Header("Efeito do golpe")]
+    public Color corDoGolpe = new Color(1f, 0.35f, 0.3f);
+    public float tempoPiscar = 0.12f;
 
     [Header("Morte")]
     [Tooltip("Tempo que ele leva para cair deitado (segundos).")]
@@ -30,8 +41,11 @@ public class VidaSkeleton : MonoBehaviour
     private Animator anim;
     private NavMeshAgent agent;
     private bool morto;
+    private int golpesLevados;
+    private float ultimoGolpe = -999f;
 
     public bool EstaMorto { get { return morto; } }
+    public int GolpesRestantes { get { return Mathf.Max(0, golpesParaMorrer - golpesLevados); } }
 
     void Awake()
     {
@@ -56,18 +70,48 @@ public class VidaSkeleton : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
     }
 
+    // Cada golpe tira um "ponto de vida", não importa o dano da espada
     public void ReceberDano(float dano)
     {
         if (morto) return;
+        if (Time.time - ultimoGolpe < intervaloEntreGolpes) return;   // mesmo golpe chegando duas vezes
+        ultimoGolpe = Time.time;
 
-        vida -= dano;
+        golpesLevados++;
+        Debug.Log("Esqueleto levou golpe: faltam " + GolpesRestantes);
 
-        Debug.Log("Vida do esqueleto: " + vida);
-
-        if (vida <= 0)
+        if (golpesLevados >= Mathf.Max(1, golpesParaMorrer))
         {
             Morrer();
+            return;
         }
+
+        StartCoroutine(Piscar());
+        var ia = GetComponent<InimigoSkeleton>();
+        if (ia != null && ia.enabled) ia.AoLevarGolpe();
+    }
+
+    // Pisca avermelhado ao levar golpe
+    IEnumerator Piscar()
+    {
+        var blocos = new List<(Renderer, MaterialPropertyBlock)>();
+        foreach (Renderer r in GetComponentsInChildren<Renderer>())
+        {
+            if (r is ParticleSystemRenderer) continue;
+            var mpb = new MaterialPropertyBlock();
+            r.GetPropertyBlock(mpb);
+            var antes = new MaterialPropertyBlock();
+            r.GetPropertyBlock(antes);
+            mpb.SetColor("_BaseColor", corDoGolpe);
+            mpb.SetColor("_Color", corDoGolpe);
+            r.SetPropertyBlock(mpb);
+            blocos.Add((r, antes));
+        }
+
+        yield return new WaitForSeconds(tempoPiscar);
+
+        foreach (var (r, antes) in blocos)
+            if (r != null) r.SetPropertyBlock(antes);
     }
 
     void Morrer()
