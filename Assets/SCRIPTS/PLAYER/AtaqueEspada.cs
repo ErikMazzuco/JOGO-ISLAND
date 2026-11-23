@@ -28,8 +28,11 @@ public class AtaqueEspada : MonoBehaviour
     public string nomeAnimacao = "SWORD_ATTACK";
 
     [Header("Som")]
+    [Tooltip("Não é mais usado: o golpe toca numa fonte própria (a do jogador era cortada pelo som dos passos).")]
     public AudioSource audioSource;
+    [Tooltip("Som do golpe da espada.")]
     public AudioClip somEspada;
+    [Range(0f, 1f)] public float volumeGolpe = 1f;
 
     float proximoAtaque;
     float momentoDoGolpe;
@@ -38,6 +41,7 @@ public class AtaqueEspada : MonoBehaviour
 
     GameObject miraCanvas;
     Image miraImagem;
+    AudioSource fonteGolpe;
 
     void Awake()
     {
@@ -62,6 +66,15 @@ public class AtaqueEspada : MonoBehaviour
     {
         cam = Camera.main;
         if (mostrarMira) CriarMira();
+
+        // Fonte de áudio só do golpe. O PlayerMovement chama Stop() na fonte do jogador sempre que
+        // ele está parado, e isso cortava o som da espada quando você batia sem andar.
+        var go = new GameObject("SomEspada");
+        go.transform.SetParent(transform, false);
+        fonteGolpe = go.AddComponent<AudioSource>();
+        fonteGolpe.playOnAwake = false;
+        fonteGolpe.loop = false;
+        fonteGolpe.spatialBlend = 0f;
     }
 
     void OnDestroy()
@@ -100,8 +113,11 @@ public class AtaqueEspada : MonoBehaviour
             animacaoArma.Play(nomeAnimacao, 0, 0f);
 
         // Reproduzir som
-        if (audioSource != null && somEspada != null)
-            audioSource.PlayOneShot(somEspada);
+        if (fonteGolpe != null && somEspada != null)
+        {
+            fonteGolpe.pitch = Random.Range(0.95f, 1.05f);
+            fonteGolpe.PlayOneShot(somEspada, volumeGolpe);
+        }
 
         golpePendente = true;
         momentoDoGolpe = Time.time + Mathf.Max(0f, atrasoDoGolpe);

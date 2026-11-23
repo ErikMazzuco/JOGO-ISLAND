@@ -2,24 +2,33 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-// ISLAND > Ligar Som de Morte do Esqueleto
-// Coloca o "MORTE INIMIGO.mp3" no campo "Som Morte" de todos os esqueletos (prefabs e cena aberta).
-public static class LigarSomMorteInimigo
+// ISLAND > Ligar Sons de Combate
+// Coloca os sons de combate nos scripts (prefabs e cena aberta):
+//   Esqueleto: Som Dano (ACERTO OSSO) e Som Morte (MORTE ESQUELETO)
+//   Espada:    Som Espada (GOLPE ESPADA)
+public static class LigarSonsCombate
 {
-    const string CaminhoSom = "Assets/SONGS/INIMIGOS/MORTE INIMIGO.mp3";
+    const string SomGolpe = "Assets/SONGS/PLAYER/GOLPE ESPADA.wav";
+    const string SomAcerto = "Assets/SONGS/INIMIGOS/ACERTO OSSO.wav";
+    const string SomMorte = "Assets/SONGS/INIMIGOS/MORTE ESQUELETO.wav";
 
-    [MenuItem("ISLAND/Ligar Som de Morte do Esqueleto")]
+    [MenuItem("ISLAND/Ligar Sons de Combate")]
     static void Ligar()
     {
-        var clip = AssetDatabase.LoadAssetAtPath<AudioClip>(CaminhoSom);
-        if (clip == null)
+        AssetDatabase.Refresh();
+
+        var golpe = AssetDatabase.LoadAssetAtPath<AudioClip>(SomGolpe);
+        var acerto = AssetDatabase.LoadAssetAtPath<AudioClip>(SomAcerto);
+        var morte = AssetDatabase.LoadAssetAtPath<AudioClip>(SomMorte);
+
+        if (golpe == null || acerto == null || morte == null)
         {
-            EditorUtility.DisplayDialog("Som não encontrado",
-                "Não achei o arquivo:\n" + CaminhoSom + "\n\nConfira o nome e a pasta do som.", "OK");
+            EditorUtility.DisplayDialog("Sons não encontrados",
+                "Não achei algum destes arquivos:\n" + SomGolpe + "\n" + SomAcerto + "\n" + SomMorte, "OK");
             return;
         }
 
-        int prefabs = 0, cena = 0;
+        int esqueletos = 0, espadas = 0;
 
         // 1) Prefabs (é de onde o spawner cria os esqueletos)
         foreach (string guid in AssetDatabase.FindAssets("t:Prefab"))
@@ -31,34 +40,51 @@ public static class LigarSomMorteInimigo
             if (raiz == null) continue;
 
             foreach (var vida in raiz.GetComponentsInChildren<VidaSkeleton>(true))
-            {
-                if (Definir(vida, clip)) prefabs++;
-            }
+                if (DefinirEsqueleto(vida, acerto, morte)) esqueletos++;
+
+            foreach (var espada in raiz.GetComponentsInChildren<AtaqueEspada>(true))
+                if (DefinirEspada(espada, golpe)) espadas++;
         }
 
-        // 2) Esqueletos que já estão na cena aberta
+        // 2) O que já está na cena aberta
+        bool cena = false;
         foreach (var vida in Object.FindObjectsByType<VidaSkeleton>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-        {
-            if (Definir(vida, clip)) cena++;
-        }
+            if (DefinirEsqueleto(vida, acerto, morte)) { esqueletos++; cena = true; }
 
-        if (cena > 0) EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+        foreach (var espada in Object.FindObjectsByType<AtaqueEspada>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            if (DefinirEspada(espada, golpe)) { espadas++; cena = true; }
+
+        if (cena) EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
         AssetDatabase.SaveAssets();
 
-        EditorUtility.DisplayDialog("Som de morte ligado",
-            "Prefabs atualizados: " + prefabs + "\nEsqueletos na cena: " + cena +
+        EditorUtility.DisplayDialog("Sons de combate ligados",
+            "Esqueletos atualizados: " + esqueletos + "\nEspadas atualizadas: " + espadas +
             "\n\nSalve a cena (Ctrl+S).", "OK");
     }
 
-    static bool Definir(VidaSkeleton vida, AudioClip clip)
+    static bool DefinirEsqueleto(VidaSkeleton vida, AudioClip acerto, AudioClip morte)
     {
         var so = new SerializedObject(vida);
-        var prop = so.FindProperty("somMorte");
-        if (prop == null) return false;
+        var dano = so.FindProperty("somDano");
+        var mor = so.FindProperty("somMorte");
+        if (dano == null || mor == null) return false;
 
-        prop.objectReferenceValue = clip;
+        dano.objectReferenceValue = acerto;
+        mor.objectReferenceValue = morte;
         so.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(vida);
+        return true;
+    }
+
+    static bool DefinirEspada(AtaqueEspada espada, AudioClip golpe)
+    {
+        var so = new SerializedObject(espada);
+        var prop = so.FindProperty("somEspada");
+        if (prop == null) return false;
+
+        prop.objectReferenceValue = golpe;
+        so.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(espada);
         return true;
     }
 }

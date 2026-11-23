@@ -29,8 +29,11 @@ public class VidaSkeleton : MonoBehaviour
     [Tooltip("Quanto ele afunda no chão enquanto some (metros).")]
     public float afundar = 0.15f;
 
-    [Header("Som de morte")]
-    [Tooltip("Som tocado quando o esqueleto morre (MORTE INIMIGO.mp3).")]
+    [Header("Sons")]
+    [Tooltip("Som de quando a espada acerta o esqueleto (toca em todo golpe, inclusive o que mata).")]
+    public AudioClip somDano;
+    [Range(0f, 1f)] public float volumeDano = 1f;
+    [Tooltip("Som de quando o esqueleto morre (gemido, queda e ossos).")]
     public AudioClip somMorte;
     [Range(0f, 1f)] public float volumeMorte = 1f;
 
@@ -80,6 +83,8 @@ public class VidaSkeleton : MonoBehaviour
         golpesLevados++;
         Debug.Log("Esqueleto levou golpe: faltam " + GolpesRestantes);
 
+        TocarNoLocal(somDano, volumeDano);
+
         if (golpesLevados >= Mathf.Max(1, golpesParaMorrer))
         {
             Morrer();
@@ -89,6 +94,30 @@ public class VidaSkeleton : MonoBehaviour
         StartCoroutine(Piscar());
         var ia = GetComponent<InimigoSkeleton>();
         if (ia != null && ia.enabled) ia.AoLevarGolpe();
+    }
+
+    // Toca um som 3D no lugar do esqueleto, numa fonte temporária (continua tocando mesmo se ele for
+    // destruído) e com o tom variando um pouco para não soar sempre igual.
+    void TocarNoLocal(AudioClip clip, float volume)
+    {
+        if (clip == null) return;
+
+        float tom = Random.Range(0.94f, 1.06f);
+
+        var go = new GameObject("SomEsqueleto");
+        go.transform.position = transform.position + Vector3.up;
+
+        var fonte = go.AddComponent<AudioSource>();
+        fonte.clip = clip;
+        fonte.volume = volume;
+        fonte.pitch = tom;
+        fonte.spatialBlend = 1f;
+        fonte.rolloffMode = AudioRolloffMode.Linear;
+        fonte.minDistance = 4f;
+        fonte.maxDistance = 45f;
+        fonte.Play();
+
+        Destroy(go, clip.length / tom + 0.2f);
     }
 
     // Pisca avermelhado ao levar golpe
@@ -132,8 +161,7 @@ public class VidaSkeleton : MonoBehaviour
             fonte.Stop();
 
         // Som de morte (fonte separada, assim ele toca inteiro mesmo se o esqueleto for destruído)
-        if (somMorte != null)
-            AudioSource.PlayClipAtPoint(somMorte, transform.position + Vector3.up, volumeMorte);
+        TocarNoLocal(somMorte, volumeMorte);
 
         // Animação de morte do próprio Animator (só se existir e estiver ligada)
         if (anim != null)

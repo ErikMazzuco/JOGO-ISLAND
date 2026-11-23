@@ -97019,7 +97019,8 @@ MonoBehaviour:
   animacaoArma: {fileID: 384671557}
   nomeAnimacao: SWORD_ATTACK
   audioSource: {fileID: 384671556}
-  somEspada: {fileID: 8300000, guid: c25e20c02e6520a4f8abeac73350acad, type: 3}
+  somEspada: {fileID: 8300000, guid: 17ab4bab970983248ba0bf2a3baa144e, type: 3}
+  volumeGolpe: 1
 --- !u!82 &384671556
 AudioSource:
   m_ObjectHideFlags: 0
@@ -467181,7 +467182,8 @@ MonoBehaviour:
   animacaoArma: {fileID: 384671557}
   nomeAnimacao: SWORD_ATTACK
   audioSource: {fileID: 2029931407}
-  somEspada: {fileID: 8300000, guid: 24799a6837520f9459dad7cef7df4478, type: 3}
+  somEspada: {fileID: 8300000, guid: 17ab4bab970983248ba0bf2a3baa144e, type: 3}
+  volumeGolpe: 1
 --- !u!4 &2030310042 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4197058723205850771, guid: 762c7ce7ac5a7b84390c6e08365bfa8f, type: 3}

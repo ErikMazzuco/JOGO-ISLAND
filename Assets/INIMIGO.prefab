@@ -109,12 +109,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa7029b05878a3c4d8a5cfa32102f0e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  golpesParaMorrer: 2
+  intervaloEntreGolpes: 0.3
   vida: 100
+  corDoGolpe: {r: 1, g: 0.35, b: 0.3, a: 1}
+  tempoPiscar: 0.12
   tempoParaCair: 0.7
   esperaDeitado: 1.5
   tempoParaSumir: 2
   afundar: 0.15
-  somMorte: {fileID: 8300000, guid: 247dbc504bb2c1642be030c83ba268f8, type: 3}
+  somDano: {fileID: 8300000, guid: f14dcd270ff6ab24dab53863ae6e0b9a, type: 3}
+  volumeDano: 1
+  somMorte: {fileID: 8300000, guid: fd76dda5c6dfbb94aaa23efc6d261b7c, type: 3}
   volumeMorte: 0.483
   tocarAnimacaoMorte: 0
   animacaoMorte: DEATH
@@ -130,7 +136,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9a304a11270c3049b8a4de013a36274, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rangeVisao: 20
+  distanciaVisao: 12
+  anguloVisao: 120
+  distanciaPercepcao: 3
+  alturaOlhos: 1.4
+  distanciaDesistir: 35
+  tempoMemoria: 12
+  raioChamarAmigos: 10
+  velocidadePerseguir: 3.2
+  velocidadePassear: 0.9
+  raioPassear: 4
+  pausaPassear: {x: 2, y: 6}
   rangeAtaque: 1.3
   dano: 10
   intervaloAtaque: 1
@@ -144,6 +160,7 @@ MonoBehaviour:
   volumePassos: 0.26
   volumeAtaque: 0.328
   volumeRugido: 0.434
+  rangeVisao: 20
 --- !u!195 &6321722088325742275
 NavMeshAgent:
   m_ObjectHideFlags: 0
