@@ -22,7 +22,8 @@ A exploração é feita em primeira pessoa, para uma experiência imersiva no am
 | **Mouse** | Controlar a câmera e a visão do personagem |
 | **Botão esquerdo do mouse** | Atacar com a espada |
 | **M** | Alternar o zoom do minimapa (perto / longe) |
-| **Esc** | Fechar o painel de opções |
+| **Esc Menu** | Fechar o painel de opções |
+| **Esc Jogo** | Menu Pause |
 
 ## ✨ Funcionalidades
 
