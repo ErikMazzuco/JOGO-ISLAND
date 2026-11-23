@@ -28,11 +28,13 @@ Material:
     m_Ints: []
     m_Floats:
     - _FoamAmount: 0.24
-    - _FoamScale: 10
+    - _FoamScale: 0.7
     - _FresnelPower: 7.92
     - _GlintStrength: 4
-    - _WaveHeight: 0
-    - _WaveSpeed: 0
+    - _ShoreDistance: 0.26
+    - _WaveFrequency: 1.53
+    - _WaveHeight: 0.18
+    - _WaveSpeed: 0.61
     m_Colors:
     - _DeepColor: {r: 0.55602527, g: 0.8018868, b: 0.6167157, a: 0.6509804}
     - _FoamColor: {r: 1, g: 1, b: 1, a: 1}
