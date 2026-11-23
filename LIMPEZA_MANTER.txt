@@ -1,0 +1,29 @@
+# Arquivos e pastas que a limpeza do projeto NUNCA move (um caminho por linha).
+# Para adicionar: selecione no Project e use ISLAND > Limpeza > 5 - Proteger Selecionados.
+Assets/IMPORTS/Rocks 2/low_poly_rocks/Prefabs
+Assets/IMPORTS/SimpleNaturePack/Prefabs/Flowers_01.prefab
+Assets/IMPORTS/SimpleNaturePack/Prefabs/Flowers_02.prefab
+Assets/IMPORTS/LowPolyMedievalPropsLite/Prefabs/WoodPlank_02.prefab
+Assets/IMPORTS/LowPolyMedievalPropsLite/Prefabs/Box_01.prefab
+Assets/IMPORTS/LowPolyMedievalPropsLite/Prefabs/Bottle_01.prefab
+Assets/IMPORTS/LowPolyMedievalPropsLite/Prefabs/Pointer_03.prefab
+Assets/IMPORTS/LowPolyMedievalPropsLite/Prefabs/Fire_01.prefab
+Assets/IMPORTS/LowPolyMedievalPropsLite/Prefabs/Furniture_03.prefab
+Assets/IMPORTS/LowPolyMedievalPropsLite/Prefabs/WoodPlank_01.prefab
+Assets/IMPORTS/LowPolyMedievalPropsLite/Prefabs/Bucket_01.prefab
+Assets/IMPORTS/LowPolyMedievalPropsLite/Prefabs/Axe_01.prefab
+Assets/IMPORTS/LowPolyMedievalPropsLite/Prefabs/Stairs_01.prefab
+Assets/IMPORTS/LowPolyMedievalPropsLite/Prefabs/Wineglass_01.prefab
+Assets/IMPORTS/LowPolyMedievalPropsLite/Prefabs/Pointer_02.prefab
+Assets/IMPORTS/LowPolyMedievalPropsLite/Prefabs/Cup_02.prefab
+Assets/IMPORTS/LowPolyMedievalPropsLite/Prefabs/Barrel_01.prefab
+Assets/IMPORTS/LowPolyMedievalPropsLite/Prefabs/Bottle_02.prefab
+Assets/IMPORTS/COSMETICOS/Prefabs/Nature/Rocks/rpgpp_lt_rock_02.prefab
+Assets/IMPORTS/COSMETICOS/Prefabs/Nature/Rocks/rpgpp_lt_rock_small_01.prefab
+Assets/IMPORTS/COSMETICOS/Prefabs/Nature/Rocks/rpgpp_lt_rock_03.prefab
+Assets/IMPORTS/COSMETICOS/Prefabs/Props/Hangers/rpgpp_lt_hanger_wood_02.prefab
+Assets/IMPORTS/COSMETICOS/Prefabs/Props/Hangers/rpgpp_lt_hanger_clothes_01.prefab
+Assets/IMPORTS/COSMETICOS/Prefabs/Props/Containers/rpgpp_lt_barrel_01.prefab
+Assets/IMPORTS/COSMETICOS/Prefabs/Props/Containers/rpgpp_lt_barrel_02.prefab
+Assets/IMPORTS/COSMETICOS/Prefabs/Props/Banners/rpgpp_lt_banner_01a.prefab
+Assets/IMPORTS/INIMIGO ESQUELETO/unded_Demo
