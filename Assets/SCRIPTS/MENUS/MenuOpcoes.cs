@@ -33,6 +33,8 @@ public class MenuOpcoes : MonoBehaviour
     [Header("Outros")]
     public Button botaoVoltar;
     public AudioMenu som;
+    [Tooltip("Desligue quando o painel for aberto pelo menu de pausa (a pausa trata o ESC).")]
+    public bool fecharComEsc = true;
 
     [Header("Cores")]
     public Color corLigado = new Color(0.45f, 0.85f, 0.35f);
@@ -109,7 +111,7 @@ public class MenuOpcoes : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape)) Fechar();
+        if (fecharComEsc && Input.GetKeyDown(KeyCode.Escape)) Fechar();
     }
 
     public void Abrir()

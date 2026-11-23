@@ -64,6 +64,24 @@ public static class CriarMenuOpcoes
                 UnityEventTools.RemovePersistentListener(botaoConfig.onClick, i);
         }
 
+        var opcoes = ConstruirPainel(canvas, Object.FindFirstObjectByType<AudioMenu>());
+
+        // ---------- Liga o botão CONFIG ----------
+        UnityEventTools.AddVoidPersistentListener(botaoConfig.onClick, opcoes.Abrir);
+        EditorUtility.SetDirty(botaoConfig);
+
+        EditorSceneManager.MarkSceneDirty(opcoes.gameObject.scene);
+        Selection.activeGameObject = opcoes.gameObject;
+
+        Debug.Log("Menu de opções criado e ligado ao botão CONFIG. Salve a cena (Ctrl+S) e aperte Play.");
+    }
+
+    /// <summary>
+    /// Constrói o painel de opções dentro do canvas dado (começa fechado). Usado pelo botão CONFIG
+    /// do Menu e pelo menu de pausa do jogo.
+    /// </summary>
+    public static MenuOpcoes ConstruirPainel(Canvas canvas, AudioMenu som)
+    {
         // ---------- Imagens ----------
         Sprite painelSpr = CriarHUDVida.CarregarSprite(CaminhoPainel);
         Sprite tituloSpr = CriarHUDVida.CarregarSprite(CaminhoTitulo);
@@ -82,7 +100,7 @@ public static class CriarMenuOpcoes
         escuro.raycastTarget = true;
 
         var opcoes = raiz.gameObject.AddComponent<MenuOpcoes>();
-        opcoes.som = Object.FindFirstObjectByType<AudioMenu>();
+        opcoes.som = som;
 
         // ---------- Painel de madeira ----------
         var painelRT = CriarHUDVida.NovoRect("Painel", raiz);
@@ -157,17 +175,9 @@ public static class CriarMenuOpcoes
         voltarImg.gameObject.AddComponent<AnimacaoBotao>();
         opcoes.botaoVoltar = voltarBtn;
 
-        // ---------- Liga o botão CONFIG ----------
-        UnityEventTools.AddVoidPersistentListener(botaoConfig.onClick, opcoes.Abrir);
-        EditorUtility.SetDirty(botaoConfig);
-
         // Começa fechado
         raiz.gameObject.SetActive(false);
-
-        EditorSceneManager.MarkSceneDirty(raiz.gameObject.scene);
-        Selection.activeGameObject = raiz.gameObject;
-
-        Debug.Log("Menu de opções criado e ligado ao botão CONFIG. Salve a cena (Ctrl+S) e aperte Play.");
+        return opcoes;
     }
 
     // ---------- Linhas e controles ----------

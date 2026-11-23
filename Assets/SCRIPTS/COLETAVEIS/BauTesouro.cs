@@ -77,6 +77,7 @@ public class BauTesouro : MonoBehaviour
     void Update()
     {
         perto = false;
+        if (Time.timeScale == 0f) return; // jogo pausado: sem aviso "aperte E" e sem abrir o baú
         if (aberto || jogador == null) return;
         if (vidaJogador != null && vidaJogador.Morto) return;
 
