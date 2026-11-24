@@ -27,17 +27,17 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _FoamAmount: 0.24
-    - _FoamScale: 0.7
+    - _FoamAmount: 0.749
+    - _FoamScale: 3.25
     - _FresnelPower: 7.92
     - _GlintStrength: 4
-    - _ShoreDistance: 0.26
-    - _WaveFrequency: 1.53
-    - _WaveHeight: 0.18
-    - _WaveSpeed: 0.61
+    - _ShoreDistance: 0.05
+    - _WaveFrequency: 1.06
+    - _WaveHeight: 0.33
+    - _WaveSpeed: 1.81
     m_Colors:
-    - _DeepColor: {r: 0.55602527, g: 0.8018868, b: 0.6167157, a: 0.6509804}
-    - _FoamColor: {r: 1, g: 1, b: 1, a: 1}
-    - _HorizonColor: {r: 0.1745283, g: 1, b: 0.6215701, a: 0.46666667}
+    - _DeepColor: {r: 1, g: 0.11792451, b: 0.17015289, a: 0.9647059}
+    - _FoamColor: {r: 1, g: 0, b: 0.092259884, a: 1}
+    - _HorizonColor: {r: 1, g: 0, b: 0.05047796, a: 0.70980394}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

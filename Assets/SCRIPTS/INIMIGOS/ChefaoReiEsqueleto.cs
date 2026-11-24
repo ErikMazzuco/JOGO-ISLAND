@@ -168,20 +168,20 @@ public class ChefaoReiEsqueleto : MonoBehaviour
         if (estAviso == null)
         {
             estAviso = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = Mathf.Max(20, Screen.height / 30), fontStyle = FontStyle.BoldAndItalic, wordWrap = true };
-            estAviso.normal.textColor = new Color(1f, 0.35f, 0.3f);
+            IMGUIFix.Cor(estAviso, new Color(1f, 0.35f, 0.3f));
             estNome = new GUIStyle(estAviso) { fontSize = Mathf.Max(16, Screen.height / 42), fontStyle = FontStyle.Bold };
-            estNome.normal.textColor = new Color(1f, 0.9f, 0.8f);
+            IMGUIFix.Cor(estNome, new Color(1f, 0.9f, 0.8f));
             barraFundo = new Texture2D(1, 1); barraFundo.SetPixel(0, 0, new Color(0, 0, 0, 0.7f)); barraFundo.Apply();
             barraCheia = new Texture2D(1, 1); barraCheia.SetPixel(0, 0, new Color(0.8f, 0.08f, 0.05f)); barraCheia.Apply();
         }
 
         if (Time.time < avisoAte && !string.IsNullOrEmpty(aviso))
         {
-            var r = new Rect(Screen.width * 0.1f, Screen.height * 0.22f, Screen.width * 0.8f, 60);
+            var r = new Rect(Screen.width * 0.1f, Screen.height * 0.2f, Screen.width * 0.8f, Screen.height * 0.16f);
             var c = estAviso.normal.textColor;
-            estAviso.normal.textColor = new Color(0, 0, 0, 0.8f);
+            IMGUIFix.Cor(estAviso, new Color(0, 0, 0, 0.8f));
             GUI.Label(new Rect(r.x + 2, r.y + 2, r.width, r.height), aviso, estAviso);
-            estAviso.normal.textColor = c;
+            IMGUIFix.Cor(estAviso, c);
             GUI.Label(r, aviso, estAviso);
         }
 

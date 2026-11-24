@@ -159,7 +159,7 @@ public class BauTesouro : MonoBehaviour
             float alpha = Mathf.Clamp01((mensagemAte - Time.time) / 0.6f);
             var cor = GUI.color;
             GUI.color = new Color(1f, 1f, 1f, alpha);
-            var r = new Rect(0, Screen.height * (tesouroPrincipal ? 0.3f : 0.55f), Screen.width, 60);
+            var r = new Rect(0, Screen.height * (tesouroPrincipal ? 0.26f : 0.55f), Screen.width, tesouroPrincipal ? Screen.height * 0.2f : 60f);
             Sombra(r, mensagem, tesouroPrincipal ? estiloMensagem : estiloAviso);
             GUI.color = cor;
         }
@@ -168,9 +168,9 @@ public class BauTesouro : MonoBehaviour
     static void Sombra(Rect r, string texto, GUIStyle estilo)
     {
         var corOriginal = estilo.normal.textColor;
-        estilo.normal.textColor = new Color(0f, 0f, 0f, 0.75f);
+        IMGUIFix.Cor(estilo, new Color(0f, 0f, 0f, 0.75f));
         GUI.Label(new Rect(r.x + 2, r.y + 2, r.width, r.height), texto, estilo);
-        estilo.normal.textColor = corOriginal;
+        IMGUIFix.Cor(estilo, corOriginal);
         GUI.Label(r, texto, estilo);
     }
 
@@ -184,12 +184,13 @@ public class BauTesouro : MonoBehaviour
             fontSize = Mathf.Max(18, Screen.height / 32),
             fontStyle = FontStyle.Bold
         };
-        estiloAviso.normal.textColor = Color.white;
+        IMGUIFix.Cor(estiloAviso, Color.white);
 
         estiloMensagem = new GUIStyle(estiloAviso)
         {
-            fontSize = Mathf.Max(28, Screen.height / 16)
+            fontSize = Mathf.Max(26, Screen.height / 20),
+            wordWrap = true
         };
-        estiloMensagem.normal.textColor = new Color(1f, 0.85f, 0.25f);
+        IMGUIFix.Cor(estiloMensagem, new Color(1f, 0.85f, 0.25f));
     }
 }

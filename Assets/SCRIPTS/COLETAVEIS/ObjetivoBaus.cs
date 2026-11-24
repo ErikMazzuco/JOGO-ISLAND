@@ -15,10 +15,13 @@ public class ObjetivoBaus : MonoBehaviour
     public string nomeCenaMenu = "Menu";
     [Tooltip("Segundos entre abrir o último baú e a tela de vitória (para ver o baú abrindo).")]
     public float esperaVitoria = 2.5f;
+    [Tooltip("Tela de vitória (uGUI, com os textos editáveis). Criada por ISLAND > Criar Tela de Vitória.")]
+    public TelaVitoria telaVitoria;
 
     int total;
     readonly HashSet<BauTesouro> abertos = new HashSet<BauTesouro>();
     bool venceu;
+    bool telaNova;   // true quando a vitória é mostrada pela TelaVitoria (uGUI) em vez do desenho antigo
     float tempoFinal;
     float pulso;
 
@@ -46,6 +49,17 @@ public class ObjetivoBaus : MonoBehaviour
         venceu = true;
         tempoFinal = Time.timeSinceLevelLoad;
         yield return new WaitForSeconds(esperaVitoria);
+
+        // Tela de vitória nova (uGUI com visual de madeira)
+        var tela = telaVitoria != null ? telaVitoria : FindFirstObjectByType<TelaVitoria>(FindObjectsInactive.Include);
+        if (tela != null)
+        {
+            telaNova = true;
+            tela.Mostrar(abertos.Count, total, ContadorMoedas.Total, tempoFinal);
+            yield break;
+        }
+
+        // Plano B (se a tela nova não existir na cena): o desenho antigo
         Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -68,13 +82,15 @@ public class ObjetivoBaus : MonoBehaviour
             var r = new Rect((Screen.width - w) * 0.5f, 14f, w, h);
             GUI.DrawTexture(r, caixa);
             var cor = estHud.normal.textColor;
-            estHud.normal.textColor = Color.Lerp(new Color(1f, 0.88f, 0.45f), Color.white, pulso);
+            IMGUIFix.Cor(estHud, Color.Lerp(new Color(1f, 0.88f, 0.45f), Color.white, pulso));
             GUI.Label(r, t, estHud);
-            estHud.normal.textColor = cor;
+            IMGUIFix.Cor(estHud, cor);
             if (!venceu || Time.timeScale > 0f) return;
         }
 
-        // ---------- tela de vitória ----------
+        if (telaNova) return;   // a TelaVitoria (uGUI) cuida da vitória
+
+        // ---------- tela de vitória (plano B) ----------
         GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), fundo);
         float pw = Mathf.Min(640f, Screen.width * 0.85f), ph = Mathf.Min(440f, Screen.height * 0.8f);
         var p = new Rect((Screen.width - pw) * 0.5f, (Screen.height - ph) * 0.5f, pw, ph);
@@ -115,13 +131,13 @@ public class ObjetivoBaus : MonoBehaviour
         caixa = Cor(new Color(0.18f, 0.10f, 0.04f, 0.78f));
 
         estHud = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = Mathf.Max(20, Screen.height / 34), fontStyle = FontStyle.Bold };
-        estHud.normal.textColor = new Color(1f, 0.88f, 0.45f);
+        IMGUIFix.Cor(estHud, new Color(1f, 0.88f, 0.45f));
         estTitulo = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = Mathf.Max(48, Screen.height / 9), fontStyle = FontStyle.Bold };
-        estTitulo.normal.textColor = new Color(1f, 0.80f, 0.25f);
+        IMGUIFix.Cor(estTitulo, new Color(1f, 0.80f, 0.25f));
         estSub = new GUIStyle(estHud) { fontSize = Mathf.Max(20, Screen.height / 30), fontStyle = FontStyle.Italic };
-        estSub.normal.textColor = new Color(1f, 0.95f, 0.85f);
+        IMGUIFix.Cor(estSub, new Color(1f, 0.95f, 0.85f));
         estInfo = new GUIStyle(estHud) { fontSize = Mathf.Max(18, Screen.height / 36), fontStyle = FontStyle.Normal };
-        estInfo.normal.textColor = Color.white;
+        IMGUIFix.Cor(estInfo, Color.white);
         estBotao = new GUIStyle(GUI.skin.button) { fontSize = Mathf.Max(18, Screen.height / 36), fontStyle = FontStyle.Bold };
         estBotao.normal.background = Cor(new Color(0.55f, 0.30f, 0.10f));
         estBotao.hover.background = Cor(new Color(0.72f, 0.42f, 0.14f));

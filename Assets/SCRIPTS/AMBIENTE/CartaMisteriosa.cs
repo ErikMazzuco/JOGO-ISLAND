@@ -139,9 +139,9 @@ public class CartaMisteriosa : MonoBehaviour
     static void Sombra(Rect r, string t, GUIStyle e)
     {
         var c = e.normal.textColor;
-        e.normal.textColor = new Color(0, 0, 0, 0.75f);
+        IMGUIFix.Cor(e, new Color(0, 0, 0, 0.75f));
         GUI.Label(new Rect(r.x + 2, r.y + 2, r.width, r.height), t, e);
-        e.normal.textColor = c;
+        IMGUIFix.Cor(e, c);
         GUI.Label(r, t, e);
     }
 
@@ -154,14 +154,14 @@ public class CartaMisteriosa : MonoBehaviour
 
         var tinta = new Color(0.22f, 0.13f, 0.07f);
         estTitulo = new GUIStyle(GUI.skin.label) { fontSize = Mathf.Max(22, Screen.height / 30), fontStyle = FontStyle.BoldAndItalic, alignment = TextAnchor.MiddleCenter, wordWrap = true };
-        estTitulo.normal.textColor = tinta;
+        IMGUIFix.Cor(estTitulo, tinta);
         estTexto = new GUIStyle(GUI.skin.label) { fontSize = Mathf.Max(17, Screen.height / 44), fontStyle = FontStyle.Italic, wordWrap = true };
-        estTexto.normal.textColor = tinta;
+        IMGUIFix.Cor(estTexto, tinta);
         estAssinatura = new GUIStyle(estTexto) { alignment = TextAnchor.MiddleRight, fontStyle = FontStyle.BoldAndItalic };
         estDica = new GUIStyle(estTexto) { alignment = TextAnchor.MiddleCenter, fontSize = Mathf.Max(13, Screen.height / 60), fontStyle = FontStyle.Normal };
-        estDica.normal.textColor = new Color(0.35f, 0.25f, 0.15f);
+        IMGUIFix.Cor(estDica, new Color(0.35f, 0.25f, 0.15f));
         estAviso = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = Mathf.Max(18, Screen.height / 32), fontStyle = FontStyle.Bold };
-        estAviso.normal.textColor = Color.white;
+        IMGUIFix.Cor(estAviso, Color.white);
     }
 
     // Papel envelhecido: bege com bordas mais escuras e manchinhas
