@@ -47,6 +47,31 @@ public class AudioManager : MonoBehaviour
             StartCoroutine(TocarVento());
     }
 
+    /// <summary>Troca a música de fundo com um fade (usado quando a noite cai).</summary>
+    public void TrocarMusica(AudioClip nova, float duracaoFade = 2f, float volume = -1f)
+    {
+        if (nova == null || audioMusica == null) return;
+        StartCoroutine(FadeMusica(nova, duracaoFade, volume < 0f ? volumeMusica : volume));
+    }
+
+    IEnumerator FadeMusica(AudioClip nova, float duracao, float volumeFinal)
+    {
+        float inicio = audioMusica.volume;
+        for (float t = 0f; t < 1f; t += Time.deltaTime / Mathf.Max(0.01f, duracao * 0.5f))
+        {
+            audioMusica.volume = Mathf.Lerp(inicio, 0f, t);
+            yield return null;
+        }
+        audioMusica.clip = nova;
+        audioMusica.Play();
+        for (float t = 0f; t < 1f; t += Time.deltaTime / Mathf.Max(0.01f, duracao * 0.5f))
+        {
+            audioMusica.volume = Mathf.Lerp(0f, volumeFinal, t);
+            yield return null;
+        }
+        audioMusica.volume = volumeFinal;
+    }
+
     IEnumerator TocarVento()
     {
         while (true)

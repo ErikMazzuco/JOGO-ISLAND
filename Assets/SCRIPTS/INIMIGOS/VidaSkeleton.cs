@@ -143,9 +143,16 @@ public class VidaSkeleton : MonoBehaviour
             if (r != null) r.SetPropertyBlock(antes);
     }
 
+    /// <summary>Chamado quando o esqueleto morre (o chefão usa para soltar o último baú).</summary>
+    public event System.Action Morreu;
+
+    /// <summary>Mata na hora (usado em testes).</summary>
+    public void MatarAgora() { if (!morto) Morrer(); }
+
     void Morrer()
     {
         morto = true;
+        if (Morreu != null) Morreu();
 
         // Parar movimentação
         if (agent != null)

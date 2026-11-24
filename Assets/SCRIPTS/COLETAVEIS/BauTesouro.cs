@@ -91,11 +91,17 @@ public class BauTesouro : MonoBehaviour
             Abrir();
     }
 
+    /// <summary>Avisado sempre que qualquer baú é aberto (usado pelo objetivo "abrir todos os baús").</summary>
+    public static event System.Action<BauTesouro> AlgumAberto;
+
+    public bool EstaAberto { get { return aberto; } }
+
     public void Abrir()
     {
         if (aberto) return;
         aberto = true;
         perto = false;
+        if (AlgumAberto != null) AlgumAberto(this);
 
         if (lootBox != null)
         {
@@ -136,6 +142,7 @@ public class BauTesouro : MonoBehaviour
 
     void OnGUI()
     {
+        if (Time.timeScale == 0f) return;   // pausa / vitória: não desenha por cima
         if (!perto && Time.time > mensagemAte) return;
 
         CriarEstilos();

@@ -19,8 +19,8 @@ public static class ColocarEsqueletos
 {
     const string CaminhoPrefab = "Assets/INIMIGO.prefab";
     const string NomeGrupo = "ESQUELETOS_TEMPLOS";
-    const int EsqueletosNoMapa = 25;          // SpawnInimigos (pelo mapa todo)
-    const float DistanciaEntreEles = 4f;
+    const int EsqueletosNoMapa = 40;          // SpawnInimigos (pelo mapa todo)
+    const float DistanciaEntreEles = 7f;
     const float DistanciaDoJogador = 15f;
 
     struct Templo
@@ -31,10 +31,10 @@ public static class ColocarEsqueletos
 
     static readonly Templo[] Templos =
     {
-        new Templo("templo",      12),   // Templo_Yas (2 andares)
-        new Templo("TEMPLO 3",     7),
-        new Templo("TEMPLO_SALA",  6),
-        new Templo("tower_short",  3),
+        new Templo("templo",       5),   // Templo_Yas (2 andares)
+        new Templo("TEMPLO 3",     3),
+        new Templo("TEMPLO_SALA",  3),
+        new Templo("tower_short",  1),
     };
 
     [MenuItem("ISLAND/Inimigos/Colocar Esqueletos nos Templos")]
@@ -71,7 +71,9 @@ public static class ColocarEsqueletos
                 var alvo = Achar(t.objeto);
                 if (alvo == null) { log.AppendLine("✗ " + t.objeto + ": não encontrado"); continue; }
 
-                var pontos = PontosDentro(alvo);
+                // Templo fechado: só chão coberto. Ruína sem teto (ex.: TEMPLO 3): aceita também o chão aberto do templo.
+                var pontos = PontosDentro(alvo, false);
+                if (pontos.Count < t.quantidade * 2) pontos = PontosDentro(alvo, true);
                 Embaralhar(pontos, rnd);
 
                 var sub = new GameObject("Esqueletos - " + t.objeto);
@@ -108,10 +110,12 @@ public static class ColocarEsqueletos
         // Mais esqueletos pelo mapa
         foreach (var s in Object.FindObjectsByType<SpawnInimigos>(FindObjectsSortMode.None))
         {
-            if (s.quantidade >= EsqueletosNoMapa) continue;
             Undo.RecordObject(s, "Colocar Esqueletos");
-            log.AppendLine("✓ Pelo mapa (" + s.name + "): " + s.quantidade + " → " + EsqueletosNoMapa);
+            log.AppendLine("✓ Pelo mapa (" + s.name + "): " + s.quantidade + " → " + EsqueletosNoMapa +
+                           ", espalhados pela ilha toda (raio " + s.raio.ToString("F0") + " → 150 m, 10 m entre eles)");
             s.quantidade = EsqueletosNoMapa;
+            s.raio = Mathf.Max(s.raio, 150f);        // a ilha tem ~300 m: cobre até a praia
+            s.distMinEntreEles = 10f;
             EditorUtility.SetDirty(s);
         }
 
@@ -136,8 +140,8 @@ public static class ColocarEsqueletos
         EditorSceneManager.MarkSceneDirty(cena);
     }
 
-    // Chão do templo, com teto em cima, espaço para ficar em pé e NavMesh no mesmo nível
-    static List<Vector3> PontosDentro(Transform alvo)
+    // Chão do templo (com teto em cima, a não ser que aceitarSemTeto), espaço para ficar em pé e NavMesh no mesmo nível
+    static List<Vector3> PontosDentro(Transform alvo, bool aceitarSemTeto)
     {
         var lista = new List<Vector3>();
         Bounds b = Limites(alvo);
@@ -152,11 +156,12 @@ public static class ColocarEsqueletos
                 if (h.normal.y < 0.8f || !h.collider.transform.IsChildOf(alvo)) continue;
 
                 RaycastHit cima;
-                if (!Physics.Raycast(h.point + Vector3.up * 0.05f, Vector3.up, out cima, 30f, ~0, QueryTriggerInteraction.Ignore)) continue; // sem teto
-                if (cima.distance < 2.2f) continue;
+                bool temTeto = Physics.Raycast(h.point + Vector3.up * 0.05f, Vector3.up, out cima, 30f, ~0, QueryTriggerInteraction.Ignore);
+                if (!temTeto && !aceitarSemTeto) continue;          // sem teto
+                if (temTeto && cima.distance < 2.2f) continue;      // teto baixo demais
 
                 // longe de parede (não nascer grudado / dentro de parede)
-                if (Physics.CheckCapsule(h.point + Vector3.up * 0.6f, h.point + Vector3.up * 1.7f, 0.5f, ~0, QueryTriggerInteraction.Ignore)) continue;
+                if (Physics.CheckCapsule(h.point + Vector3.up * 0.6f, h.point + Vector3.up * 1.7f, 0.35f, ~0, QueryTriggerInteraction.Ignore)) continue;
 
                 NavMeshHit nh;
                 if (!NavMesh.SamplePosition(h.point, out nh, 0.6f, NavMesh.AllAreas)) continue;
